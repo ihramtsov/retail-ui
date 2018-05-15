@@ -1,0 +1,67 @@
+@import '../../variables.less';
+
+@linkIconMargin: 3px;
+
+.linkMixin(@color, @hoverColor, @focusColor, @activeColor) {
+  border-radius: 1px;
+  outline: none;
+  text-decoration: none;
+  color: @color;
+
+  &:hover {
+    color: @hoverColor;
+  }
+
+  &:focus {
+    color: @focusColor;
+  }
+
+  &:active {
+    color: @activeColor;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: @link-hover-text-decoration;
+  }
+
+  &.disabled {
+    box-shadow: none;
+    color: @link-disabled-color;
+    cursor: default;
+    text-decoration: none;
+  }
+}
+
+:local {
+  .useDefault {
+    .linkMixin(
+      @link-color,
+      @link-hover-color,
+      @link-hover-color,
+      @link-active-color
+    );
+  }
+
+  .useSuccess {
+    .linkMixin(#3f9726, #3f9726, #3f9726, #24760d);
+  }
+
+  .useDanger {
+    .linkMixin(#e3071c, #e3071c, #e3071c, #b00616);
+  }
+
+  .useGrayed {
+    .linkMixin(
+      @link-disabled-color,
+      @link-disabled-color,
+      @link-disabled-color,
+      @link-disabled-color
+    );
+  }
+
+  .icon {
+    display: inline-block;
+    margin-right: @linkIconMargin;
+  }
+}
