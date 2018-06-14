@@ -1,6 +1,6 @@
 import ExecutionEnvironment from 'exenv';
 
-let scrollbarWidth = null;
+let scrollbarWidth: number | null = null;
 
 export default function getScrollWidth() {
   if (!ExecutionEnvironment.canUseDOM) {

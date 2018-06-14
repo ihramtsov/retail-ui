@@ -2,12 +2,12 @@ import events from 'add-event-listener';
 import { EventEmitter } from 'fbemitter';
 import { unstable_batchedUpdates } from 'react-dom';
 
-let emitter;
+let emitterCache: EventEmitter;
 function getEmitter() {
-  if (!emitter) {
-    emitter = new EventEmitter();
+  if (!emitterCache) {
+    emitterCache = new EventEmitter();
   }
-  return emitter;
+  return emitterCache;
 }
 
 function listenBrowserEvents() {

@@ -1,11 +1,16 @@
-/* eslint-disable */
+/* @ts-ignore */
+/* tslint:disable */
 // imported from https://github.com/Financial-Times/polyfill-service
 
-export default (function() {
+export default (function(): (
+  elt: Element,
+  pseudoElt?: string | null | undefined
+) => CSSStyleDeclaration {
   if (document.defaultView && document.defaultView.getComputedStyle) {
     return document.defaultView.getComputedStyle.bind(document.defaultView);
   }
 
+  // @ts-ignore
   function getComputedStylePixel(element, property, fontSize) {
     var // Internet Explorer sometimes struggles to read currentStyle until the element's document is accessed.
       value = (element.document &&
@@ -29,22 +34,23 @@ export default (function() {
           : element.clientHeight;
 
     return suffix == '%'
-      ? size / 100 * rootSize
+      ? (size / 100) * rootSize
       : suffix == 'cm'
         ? size * 0.3937 * 96
         : suffix == 'em'
           ? size * fontSize
           : suffix == 'in'
             ? size * 96
-            : suffix == 'mm'
-              ? size * 0.3937 * 96 / 10
+            : suffix === 'mm'
+              ? (size * 0.3937 * 96) / 10
               : suffix == 'pc'
-                ? size * 12 * 96 / 72
+                ? (size * 12 * 96) / 72
                 : suffix == 'pt'
-                  ? size * 96 / 72
+                  ? (size * 96) / 72
                   : size;
   }
 
+  // @ts-ignore
   function setShortStyleProperty(style, property) {
     var borderSuffix = property == 'border' ? 'Width' : '',
       t = property + 'Top' + borderSuffix,
@@ -52,20 +58,27 @@ export default (function() {
       b = property + 'Bottom' + borderSuffix,
       l = property + 'Left' + borderSuffix;
 
-    style[property] = ((style[t] == style[r] &&
+    style[property] = (style[t] == style[r] &&
     style[t] == style[b] &&
-    style[t] == style[l] ? [style[t]] : style[t] == style[b] && style[l] == style[r]
+    style[t] == style[l]
+      ? [style[t]]
+      : style[t] == style[b] && style[l] == style[r]
         ? [style[t], style[r]]
         : style[l] == style[r]
           ? [style[t], style[r], style[b]]
-          : [style[t], style[r], style[b], style[l]])).join(' ');
+          : [style[t], style[r], style[b], style[l]]
+    ).join(' ');
   }
 
   // <CSSStyleDeclaration>
+  // @ts-ignore
   function CSSStyleDeclaration(element) {
-    var style = this,
+    // @ts-ignore
+    let style = this,
       currentStyle = element.currentStyle,
+      // @ts-ignore
       fontSize = getComputedStylePixel(element, 'fontSize'),
+      // @ts-ignore
       unCamelCase = function(match) {
         return '-' + match.toLowerCase();
       },
@@ -120,34 +133,40 @@ export default (function() {
   CSSStyleDeclaration.prototype = {
     constructor: CSSStyleDeclaration,
     // <CSSStyleDeclaration>.getPropertyPriority
-    getPropertyPriority: function() {
+    getPropertyPriority() {
       throw new Error('NotSupportedError: DOM Exception 9');
     },
     // <CSSStyleDeclaration>.getPropertyValue
-    getPropertyValue: function(property) {
-      return this[property.replace(/-\w/g, function(match) {
-        return match[1].toUpperCase();
-      })];
+    // @ts-ignore
+    getPropertyValue(property) {
+      return this[
+        // @ts-ignore
+        property.replace(/-\w/g, function(match) {
+          return match[1].toUpperCase();
+        })
+      ];
     },
     // <CSSStyleDeclaration>.item
-    item: function(index) {
+    // @ts-ignore
+    item(index) {
       return this[index];
     },
     // <CSSStyleDeclaration>.removeProperty
-    removeProperty: function() {
+    removeProperty() {
       throw new Error('NoModificationAllowedError: DOM Exception 7');
     },
     // <CSSStyleDeclaration>.setProperty
-    setProperty: function() {
+    setProperty() {
       throw new Error('NoModificationAllowedError: DOM Exception 7');
     },
     // <CSSStyleDeclaration>.getPropertyCSSValue
-    getPropertyCSSValue: function() {
+    getPropertyCSSValue() {
       throw new Error('NotSupportedError: DOM Exception 9');
     }
   };
-
+  // @ts-ignore
   return function getComputedStyle(element) {
+    // @ts-ignore
     return new CSSStyleDeclaration(element);
   };
 })();
