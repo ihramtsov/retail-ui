@@ -130,7 +130,9 @@ export default class Menu extends React.Component<MenuProps, MenuState> {
 
   private _scrollToSelected = () => {
     if (this._scrollContainer && this._highlighted) {
-      this._scrollContainer.scrollTo(ReactDOM.findDOMNode(this._highlighted));
+      this._scrollContainer.scrollTo(ReactDOM.findDOMNode(
+        this._highlighted
+      ) as HTMLElement);
     }
   };
 
