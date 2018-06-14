@@ -1,4 +1,4 @@
-// @flow
+
 import { type ITheme } from '../theme';
 
 export default function Calendar(theme: ITheme) {

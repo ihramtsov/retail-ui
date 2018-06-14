@@ -1,4 +1,4 @@
-// @flow
+
 export const types = {
   big: 'big',
   mini: 'mini',

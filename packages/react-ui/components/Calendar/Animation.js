@@ -1,4 +1,4 @@
-// @flow
+
 import requestAnimationFrame, { cancel as cancelAnimationFrame } from 'raf';
 import { stepper } from './stepper';
 

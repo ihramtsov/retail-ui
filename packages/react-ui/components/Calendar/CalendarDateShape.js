@@ -1,4 +1,4 @@
-// @flow
+
 
 export type CalendarDateShape = { year: number, month: number, date: number };
 

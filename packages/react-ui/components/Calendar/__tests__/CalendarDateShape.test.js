@@ -1,4 +1,4 @@
-// @flow
+
 
 import * as CDS from '../CalendarDateShape';
 

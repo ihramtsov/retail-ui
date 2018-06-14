@@ -1,4 +1,4 @@
-// @flow
+
 let calledLoad = false;
 
 export default {

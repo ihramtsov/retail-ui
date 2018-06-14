@@ -1,4 +1,4 @@
-// @flow
+
 import {
   reducers as defaultReducers,
   Effect as DefaultEffect

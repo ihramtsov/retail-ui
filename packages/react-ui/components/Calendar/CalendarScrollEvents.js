@@ -1,4 +1,4 @@
-// @flow
+
 
 import { EventEmitter } from 'fbemitter';
 

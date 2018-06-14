@@ -1,4 +1,4 @@
-// @flow
+
 let polyfillPlaceholder = false;
 
 if (

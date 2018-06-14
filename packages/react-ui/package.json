@@ -76,6 +76,7 @@
     "@types/fbemitter": "^2.0.32",
     "@types/invariant": "^2.2.29",
     "@types/jest": "^22.2.2",
+    "@types/lodash.debounce": "^4.0.3",
     "@types/prop-types": "^15.5.2",
     "@types/react": "^16.0.40",
     "@types/react-dom": "^16.0.4",

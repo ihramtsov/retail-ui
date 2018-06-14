@@ -1,4 +1,4 @@
-// @flow
+
 
 export function memo<T>(fn: T): T {
   let cache = {};

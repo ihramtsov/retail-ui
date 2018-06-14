@@ -1,4 +1,4 @@
-// @flow
+
 import * as React from 'react';
 
 import normalizeWheel from 'normalize-wheel';

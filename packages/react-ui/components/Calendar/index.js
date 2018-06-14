@@ -1,4 +1,4 @@
-// @flow
+
 
 import Calendar, { type CalendarDateShape } from './Calendar';
 

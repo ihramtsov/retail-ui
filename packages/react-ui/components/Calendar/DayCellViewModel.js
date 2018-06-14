@@ -1,4 +1,4 @@
-// @flow
+
 
 export class DayCellViewModel {
   static create(date: number, month: number, year: number, isWeekend: boolean) {
