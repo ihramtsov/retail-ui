@@ -1,20 +1,18 @@
-
-
 export function memo<T>(fn: T): T {
-  let cache = {};
-  const getHash = args => args.reduce((acc, x) => acc + x, '');
+  let cache: { [key: string]: any } = {};
+  const getHash = (args: any[]) => args.reduce((acc, x) => acc + x, '');
   let keysCount = 0;
   const limit = 1e4;
 
-  // $FlowIgnore
-  return function(...args) {
+  // @ts-ignore
+  return (...args) => {
     try {
       const hash = getHash(args);
       const fromCache = cache[hash];
       if (fromCache) {
         return fromCache;
       }
-      // $FlowIgnore
+      // @ts-ignore
       const result = fn(...args);
       cache[hash] = result;
       keysCount++;

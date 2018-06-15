@@ -1,6 +1,6 @@
 
 
-import type { ITheme } from '../theme/index';
+import { ITheme } from '../theme/index';
 
 export default function DateSelect(theme: ITheme) {
   return {

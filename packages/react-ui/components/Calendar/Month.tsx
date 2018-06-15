@@ -1,5 +1,3 @@
-
-
 import * as React from 'react';
 
 import config from './config';
@@ -11,23 +9,24 @@ import { DayCellViewModel } from './DayCellViewModel';
 import { MonthView } from './MonthView';
 import { DayCellView } from './DayCellView';
 import CalendarScrollEvents from './CalendarScrollEvents';
+import DateSelect from '../DateSelect/DateSelect';
 
-type MonthProps = {
-  top: number,
-  month: MonthViewModel,
-  maxDate?: CDS.CalendarDateShape,
-  minDate?: CDS.CalendarDateShape,
-  today?: CDS.CalendarDateShape,
-  value?: ?CDS.CalendarDateShape,
-  onDateClick?: (date: CDS.CalendarDateShape) => void,
-  onMonthYearChange: (month: number, year: number) => void
-};
+interface MonthProps {
+  top: number;
+  month: MonthViewModel;
+  maxDate?: CDS.CalendarDateShape;
+  minDate?: CDS.CalendarDateShape;
+  today?: CDS.CalendarDateShape;
+  value?: Nullable<CDS.CalendarDateShape>;
+  onDateClick?: (date: CDS.CalendarDateShape) => void;
+  onMonthYearChange: (month: number, year: number) => void;
+}
 
 export class Month extends React.Component<MonthProps> {
-  _monthSelect;
-  _yearSelect;
+  private _monthSelect: DateSelect | null = null;
+  private _yearSelect: DateSelect | null = null;
 
-  shouldComponentUpdate(nextProps: MonthProps) {
+  public shouldComponentUpdate(nextProps: MonthProps) {
     if (this.props.top !== nextProps.top) {
       return true;
     }
@@ -46,11 +45,11 @@ export class Month extends React.Component<MonthProps> {
     return this.props.month !== nextProps.month;
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     CalendarScrollEvents.addListener(this._closeSelects);
   }
 
-  render() {
+  public render() {
     const { month, maxDate, minDate, top } = this.props;
     return (
       <MonthView
@@ -73,7 +72,7 @@ export class Month extends React.Component<MonthProps> {
     );
   }
 
-  _renderCells() {
+  private _renderCells() {
     return (
       <MonthDayGrid
         days={this.props.month.days}
@@ -87,7 +86,7 @@ export class Month extends React.Component<MonthProps> {
     );
   }
 
-  _closeSelects = () => {
+  private _closeSelects = () => {
     if (this._monthSelect) {
       this._monthSelect.close();
     }
@@ -96,35 +95,35 @@ export class Month extends React.Component<MonthProps> {
     }
   };
 
-  _monthRef = monthSelect => {
+  private _monthRef = (monthSelect: DateSelect | null) => {
     this._monthSelect = monthSelect;
   };
 
-  _yearRef = yearSelect => {
+  private _yearRef = (yearSelect: DateSelect | null) => {
     this._yearSelect = yearSelect;
   };
 
-  _handleMonthSelect = (month: number) => {
+  private _handleMonthSelect = (month: number) => {
     this.props.onMonthYearChange(month, this.props.month.year);
   };
 
-  _handleYearSelect = (year: number) => {
+  private _handleYearSelect = (year: number) => {
     this.props.onMonthYearChange(this.props.month.month, year);
   };
 }
 
-type MonthDayGridProps = {
-  days: DayCellViewModel[],
-  offset: number,
-  minDate?: CDS.CalendarDateShape,
-  maxDate?: CDS.CalendarDateShape,
-  today?: CDS.CalendarDateShape,
-  value?: ?CDS.CalendarDateShape,
-  onDateClick?: CDS.CalendarDateShape => void
-};
+interface MonthDayGridProps {
+  days: DayCellViewModel[];
+  offset: number;
+  minDate?: CDS.CalendarDateShape;
+  maxDate?: CDS.CalendarDateShape;
+  today?: CDS.CalendarDateShape;
+  value?: Nullable<CDS.CalendarDateShape>;
+  onDateClick?: (x0: CDS.CalendarDateShape) => void;
+}
 
 class MonthDayGrid extends React.Component<MonthDayGridProps> {
-  shouldComponentUpdate(nextProps: MonthDayGridProps) {
+  public shouldComponentUpdate(nextProps: MonthDayGridProps) {
     if (!CDS.isEqual(nextProps.value, this.props.value)) {
       return true;
     }
@@ -140,7 +139,7 @@ class MonthDayGrid extends React.Component<MonthDayGridProps> {
     return this.props.days !== nextProps.days;
   }
 
-  render() {
+  public render() {
     return (
       <div>
         <div
@@ -165,7 +164,7 @@ class MonthDayGrid extends React.Component<MonthDayGridProps> {
     );
   }
 
-  _handleClick = event => {
+  private _handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const { onDateClick } = this.props;
     if (!onDateClick) {
       return;

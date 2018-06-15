@@ -1,8 +1,13 @@
+export interface CalendarDateShape {
+  year: number;
+  month: number;
+  date: number;
+}
 
-
-export type CalendarDateShape = { year: number, month: number, date: number };
-
-export const isEqual = (a: ?CalendarDateShape, b: ?CalendarDateShape) =>
+export const isEqual = (
+  a: Nullable<CalendarDateShape>,
+  b: Nullable<CalendarDateShape>
+) =>
   (!a && !b) ||
   (a && b && a.year === b.year && a.month === b.month && a.date === b.date);
 
@@ -47,8 +52,8 @@ export const isGreaterOrEqual = (
 
 export const isBetween = (
   date: CalendarDateShape,
-  left?: ?CalendarDateShape,
-  right?: ?CalendarDateShape
+  left?: Nullable<CalendarDateShape>,
+  right?: Nullable<CalendarDateShape>
 ) => {
   if (left && isLess(date, left)) {
     return false;

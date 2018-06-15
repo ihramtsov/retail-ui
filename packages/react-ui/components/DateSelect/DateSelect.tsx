@@ -1,5 +1,3 @@
-
-
 import classNames from 'classnames';
 import * as React from 'react';
 
@@ -8,17 +6,11 @@ import DropdownContainer from '../DropdownContainer/DropdownContainer';
 import LayoutEvents from '../../lib/LayoutEvents';
 
 import PropTypes from 'prop-types';
-import styled from '../internal/styledRender';
 
-let cssStyles;
-let jssStyles;
-if (process.env.REACT_APP_EXPERIMENTAL_CSS_IN_JS) {
-  jssStyles = require('./DateSelect.styles').default;
-} else {
-  cssStyles = require('./DateSelect.less');
-}
+import styles = require('./DateSelect.less');
 
 import Icon from '../Icon/Icon';
+import { createPropsGetter } from '../internal/createPropsGetter';
 
 const MONTHS = [
   'Январь',
@@ -37,31 +29,31 @@ const MONTHS = [
 
 const HEIGHT = 24;
 
-type Props = {
-  disabled?: boolean,
-  maxYear: number,
-  minYear: number,
-  onChange: (value: number) => void,
-  type: 'month' | 'year',
-  value: number,
-  width: number | string
-};
+interface Props {
+  disabled?: boolean;
+  maxYear?: number;
+  minYear?: number;
+  onChange: (value: number) => void;
+  type?: 'month' | 'year';
+  value: number;
+  width?: number | string;
+}
 
-type State = {
-  botCapped: boolean,
-  current: ?number,
-  height: number,
-  opened: boolean,
-  pos: number,
-  top: number,
-  topCapped: boolean,
-  nodeTop: number
-};
+interface State {
+  botCapped: boolean;
+  current: Nullable<number>;
+  height: number;
+  opened: boolean;
+  pos: number;
+  top: number;
+  topCapped: boolean;
+  nodeTop: number;
+}
 
-const isIE8 = ~window.navigator.userAgent.indexOf('MSIE 8.0');
+const isIE8 = Boolean(~window.navigator.userAgent.indexOf('MSIE 8.0'));
 
 export default class DateSelect extends React.Component<Props, State> {
-  static propTypes = {
+  public static propTypes = {
     disabled: PropTypes.bool,
 
     maxYear: PropTypes.number,
@@ -77,19 +69,14 @@ export default class DateSelect extends React.Component<Props, State> {
     onChange: PropTypes.func
   };
 
-  static defaultProps = {
+  public static defaultProps = {
     type: 'year',
     minYear: 1900,
     maxYear: 2100,
     width: 'auto'
   };
 
-  _node: HTMLElement | null = null;
-
-  _listener;
-  _timeout;
-
-  state = {
+  public state = {
     botCapped: false,
     current: 0,
     height: 0,
@@ -100,16 +87,23 @@ export default class DateSelect extends React.Component<Props, State> {
     nodeTop: Infinity
   };
 
-  componentWillReceiveProps() {
+  private _node: HTMLElement | null = null;
+
+  private _listener: Nullable<ReturnType<typeof LayoutEvents.addListener>>;
+  private _timeout: number | undefined;
+
+  private getProps = createPropsGetter(DateSelect.defaultProps);
+
+  public componentWillReceiveProps() {
     this._setNodeTop();
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this._listener = LayoutEvents.addListener(this._setNodeTop);
     this._setNodeTop();
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     if (this._listener) {
       this._listener.remove();
     }
@@ -118,7 +112,31 @@ export default class DateSelect extends React.Component<Props, State> {
     }
   }
 
-  render = styled(cssStyles, jssStyles, styles => {
+  public open = () => {
+    if (this.props.disabled) {
+      return;
+    }
+
+    if (this.state.opened) {
+      return;
+    }
+
+    this.resetSize(0);
+    this.setState({
+      opened: true,
+      current: 0
+    });
+  };
+
+  public close = () => {
+    if (!this.state.opened) {
+      return;
+    }
+
+    this.setState({ opened: false });
+  };
+
+  public render() {
     const { width, disabled } = this.props;
     const rootProps = {
       className: classNames({
@@ -141,16 +159,16 @@ export default class DateSelect extends React.Component<Props, State> {
             <Icon name="ArrowTriangleUpDown" size={12} />
           </div>
         </div>
-        {this.state.opened && this.renderMenu(styles)}
+        {this.state.opened && this.renderMenu()}
       </span>
     );
-  });
+  }
 
-  _ref = node => {
+  private _ref = (node: HTMLElement | null) => {
     this._node = node;
   };
 
-  _setNodeTop = () => {
+  private _setNodeTop = () => {
     const node = this._node;
     if (!node) {
       return;
@@ -165,7 +183,7 @@ export default class DateSelect extends React.Component<Props, State> {
     );
   };
 
-  renderMenu(styles: *) {
+  private renderMenu(): React.ReactNode {
     const { top, height, nodeTop } = this.state;
 
     let shift = this.state.pos % HEIGHT;
@@ -188,14 +206,16 @@ export default class DateSelect extends React.Component<Props, State> {
             onMouseDown: this.handleItemClick(i)
           }
         : {
-            onMouseDown: e => e.preventDefault(),
+            onMouseDown: preventDefault,
             onClick: this.handleItemClick(i)
           };
       items.push(
         <div
           key={i}
           className={className}
+          // tslint:disable-next-line:jsx-no-lambda
           onMouseEnter={() => this.setState({ current: i })}
+          // tslint:disable-next-line:jsx-no-lambda
           onMouseLeave={() => this.setState({ current: null })}
           {...clickHandler}
         >
@@ -204,17 +224,17 @@ export default class DateSelect extends React.Component<Props, State> {
       );
     }
     const style: {
-      left?: number | string,
-      right?: number | string,
-      top: number,
-      width?: number | string
+      left?: number | string;
+      right?: number | string;
+      top: number;
+      width?: number | string;
     } = {
       top: top - 5,
       left: 0,
       right: 0
     };
 
-    const shiftStyle = {
+    const shiftStyle: React.CSSProperties = {
       position: 'relative',
       top: -shift
     };
@@ -239,7 +259,7 @@ export default class DateSelect extends React.Component<Props, State> {
       >
         <div>
           <DropdownContainer
-            getParent={() => this._node}
+            getParent={this.getAnchor}
             offsetY={dropdownOffset}
             offsetX={-10}
           >
@@ -274,7 +294,11 @@ export default class DateSelect extends React.Component<Props, State> {
     );
   }
 
-  handleWheel = (event: SyntheticWheelEvent<>) => {
+  private getAnchor() {
+    return this._node;
+  }
+
+  private handleWheel = (event: React.WheelEvent<HTMLElement>) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -288,8 +312,8 @@ export default class DateSelect extends React.Component<Props, State> {
     this.resetSize(pos);
   };
 
-  handleItemClick = (shift: number) => {
-    return (e: SyntheticMouseEvent<>) => {
+  private handleItemClick = (shift: number) => {
+    return (e: React.MouseEvent<HTMLElement>) => {
       const value = this.props.value + shift;
       if (this.props.onChange) {
         this.props.onChange(value);
@@ -298,7 +322,7 @@ export default class DateSelect extends React.Component<Props, State> {
     };
   };
 
-  handleKey = (event: SyntheticKeyboardEvent<>) => {
+  private handleKey = (event: React.KeyboardEvent<any>) => {
     if (this.state.opened) {
       switch (event.key) {
         case 'Enter':
@@ -337,17 +361,17 @@ export default class DateSelect extends React.Component<Props, State> {
     }
   };
 
-  handleUp = (event: Event) => {
+  private handleUp = (event: React.MouseEvent) => {
     event.preventDefault();
     this.resetSize(this.state.pos - HEIGHT);
   };
 
-  handleDown = (event: Event) => {
+  private handleDown = (event: React.MouseEvent) => {
     event.preventDefault();
     this.resetSize(this.state.pos + HEIGHT);
   };
 
-  getItem(index: number) {
+  private getItem(index: number) {
     const value = this.props.value + index;
     if (this.props.type === 'month') {
       return MONTHS[value];
@@ -355,31 +379,7 @@ export default class DateSelect extends React.Component<Props, State> {
     return value;
   }
 
-  open = () => {
-    if (this.props.disabled) {
-      return;
-    }
-
-    if (this.state.opened) {
-      return;
-    }
-
-    this.resetSize(0);
-    this.setState({
-      opened: true,
-      current: 0
-    });
-  };
-
-  close = () => {
-    if (!this.state.opened) {
-      return;
-    }
-
-    this.setState({ opened: false });
-  };
-
-  resetSize(pos: number) {
+  private resetSize(pos: number) {
     let top = -5 * HEIGHT;
     let height = 11 * HEIGHT;
     if (this.props.type === 'month') {
@@ -401,21 +401,25 @@ export default class DateSelect extends React.Component<Props, State> {
     this.setState({ pos, top, height, topCapped, botCapped });
   }
 
-  getMinPos() {
+  private getMinPos() {
     if (this.props.type === 'month') {
       return -this.props.value * HEIGHT;
     } else if (this.props.type === 'year') {
-      return (this.props.minYear - this.props.value) * HEIGHT;
+      return (this.getProps().minYear - this.props.value) * HEIGHT;
     }
     return -Infinity; // Be defensive.
   }
 
-  getMaxPos() {
+  private getMaxPos() {
     if (this.props.type === 'month') {
       return (11 - this.props.value) * HEIGHT;
     } else if (this.props.type === 'year') {
-      return (this.props.maxYear - this.props.value) * HEIGHT;
+      return (this.getProps().maxYear - this.props.value) * HEIGHT;
     }
     return Infinity; // Be defensive.
   }
+}
+
+function preventDefault(e: React.SyntheticEvent) {
+  e.preventDefault();
 }

@@ -1,4 +1,4 @@
-/* @flow */
+
 export default {
   noWobble: { stiffness: 170, damping: 26 },
   gentle: { stiffness: 120, damping: 14 },

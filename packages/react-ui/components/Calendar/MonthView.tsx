@@ -1,38 +1,29 @@
-
-
 import classNames from 'classnames';
 import * as React from 'react';
 import * as CDS from './CalendarDateShape';
-import styled from '../internal/styledRender';
 
 import config from './config';
 
-let cssStyles;
-let jssStyles;
-if (process.env.REACT_APP_EXPERIMENTAL_CSS_IN_JS) {
-  jssStyles = require('./MonthView.styles').default;
-} else {
-  cssStyles = require('./MonthView.less');
-}
+import classes = require('./MonthView.less');
 
 import DateSelect from '../DateSelect';
 
-type Props = {
-  children: React.Node,
-  firstDayOffset: number,
-  height: number,
-  isFirstInYear?: boolean,
-  isLastInYear?: boolean,
-  maxDate?: CDS.CalendarDateShape,
-  minDate?: CDS.CalendarDateShape,
-  month: number,
-  top: number,
-  year: number,
-  onMonthSelect: (month: number) => void,
-  onYearSelect: (month: number) => void,
-  monthSelectRef: (select: DateSelect | null) => void,
-  yearSelectRef: (select: DateSelect | null) => void
-};
+interface MonthViewProps {
+  children: React.ReactNode;
+  firstDayOffset: number;
+  height: number;
+  isFirstInYear?: boolean;
+  isLastInYear?: boolean;
+  maxDate?: CDS.CalendarDateShape;
+  minDate?: CDS.CalendarDateShape;
+  month: number;
+  top: number;
+  year: number;
+  onMonthSelect: (month: number) => void;
+  onYearSelect: (month: number) => void;
+  monthSelectRef: (select: DateSelect | null) => void;
+  yearSelectRef: (select: DateSelect | null) => void;
+}
 
 export const MonthView = ({
   children,
@@ -49,7 +40,7 @@ export const MonthView = ({
   onYearSelect,
   monthSelectRef,
   yearSelectRef
-}: Props) => {
+}: MonthViewProps) => {
   const isTopNegative = top <= 0;
   const isHeaderSticked = isTopNegative && height >= -top;
 
@@ -73,7 +64,7 @@ export const MonthView = ({
 
   const yearSelectDisabled =
     top > 40 || (isLastInYear && top < -height + config.MONTH_TITLE_HEIGHT);
-  return styled.element(cssStyles, jssStyles, classes => (
+  return (
     <div className={classes.month} style={{ top }} key={month + '-' + year}>
       <div
         style={{ ...styles.monthTitle, top: headerTop, borderBottomColor }}
@@ -89,7 +80,7 @@ export const MonthView = ({
             type="month"
             value={month}
             onChange={onMonthSelect}
-            ref={!monthSelectDisabled ? monthSelectRef : null}
+            ref={!monthSelectDisabled ? monthSelectRef : undefined}
           />
         </div>
         {isYearVisible && (
@@ -102,14 +93,14 @@ export const MonthView = ({
               minYear={minDate ? minDate.year : undefined}
               maxYear={maxDate ? maxDate.year : undefined}
               onChange={onYearSelect}
-              ref={!yearSelectDisabled ? yearSelectRef : null}
+              ref={!yearSelectDisabled ? yearSelectRef : undefined}
             />
           </div>
         )}
       </div>
       {children}
     </div>
-  ));
+  );
 };
 
 const styles = {

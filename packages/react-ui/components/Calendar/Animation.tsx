@@ -1,8 +1,9 @@
-
 import requestAnimationFrame, { cancel as cancelAnimationFrame } from 'raf';
 import { stepper } from './stepper';
 
-const noop = (...args) => {};
+const noop = (...args: any[]) => {
+  /* do nothing */
+};
 
 export const Animation = () => {
   let animating = false;
@@ -39,7 +40,7 @@ export const Animation = () => {
 
   function animate(
     amount: number,
-    onDelta: number => void,
+    onDelta: (x0: number) => void,
     onEnd: () => void = noop
   ) {
     target += amount;

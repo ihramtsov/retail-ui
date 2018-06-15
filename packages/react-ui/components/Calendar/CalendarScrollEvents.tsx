@@ -1,13 +1,11 @@
-
-
 import { EventEmitter } from 'fbemitter';
 
-let emitter;
+let emitterCache: EventEmitter;
 function getEmitter() {
-  if (!emitter) {
-    emitter = new EventEmitter();
+  if (!emitterCache) {
+    emitterCache = new EventEmitter();
   }
-  return emitter;
+  return emitterCache;
 }
 
 function addListener(callback: () => void) {

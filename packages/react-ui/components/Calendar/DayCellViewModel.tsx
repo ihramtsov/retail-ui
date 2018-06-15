@@ -1,17 +1,20 @@
-
-
 export class DayCellViewModel {
-  static create(date: number, month: number, year: number, isWeekend: boolean) {
+  public static create(
+    date: number,
+    month: number,
+    year: number,
+    isWeekend: boolean
+  ) {
     return new DayCellViewModel(date, month, year, isWeekend);
   }
 
-  date: number;
+  public date: number;
 
-  month: number;
+  public month: number;
 
-  year: number;
+  public year: number;
 
-  isWeekend: boolean;
+  public isWeekend: boolean;
 
   constructor(date: number, month: number, year: number, isWeekend: boolean) {
     this.date = date;

@@ -1,16 +1,14 @@
-
-
 import config from './config';
 
 import { MonthViewModel } from './MonthViewModel';
-import type { State, Props } from './Calendar';
+import { CalendarState, CalendarProps } from './Calendar';
 
 export const calculateScrollPosition = (
   months: MonthViewModel[],
   scrollPosition: number,
   deltaY: number
 ) => {
-  let scrollDirection = deltaY > 0 ? 1 : -1;
+  const scrollDirection = deltaY > 0 ? 1 : -1;
 
   let nextScrollPosition = scrollPosition - deltaY;
   let nextMonths = months;
@@ -39,10 +37,10 @@ export const calculateScrollPosition = (
 };
 
 export const applyDelta = (deltaY: number) => (
-  { scrollPosition, months }: State,
-  { minDate, maxDate }: Props
+  { scrollPosition, months }: Readonly<CalendarState>,
+  { minDate, maxDate }: CalendarProps
 ) => {
-  let scrollDirection = deltaY > 0 ? 1 : -1;
+  const scrollDirection = deltaY > 0 ? 1 : -1;
   const isMinDateExceeded =
     minDate &&
     scrollDirection < 0 &&

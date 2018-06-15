@@ -4,14 +4,12 @@ import Calendar from '../Calendar';
 import Button from '../../Button';
 import Gapped from '../../Gapped';
 
-storiesOf('Calendar', module)
-  .add('simple', () => (
+storiesOf('Calendar', module).add('simple', () => (
     <Calendar
       minDate={{ year: 2017, month: 10, date: 13 }}
       maxDate={{ year: 2018, month: 3, date: 15 }}
     />
-  ))
-  .add('CalendarWithButtons', () => <CalendarWithButtons />);
+  )).add('CalendarWithButtons', () => <CalendarWithButtons />);
 
 const initialDate = new Date(2018, 0, 1);
 const datesToScroll = [

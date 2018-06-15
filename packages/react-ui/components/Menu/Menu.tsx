@@ -10,9 +10,9 @@ import MenuItem from '../MenuItem/MenuItem';
 import styles from './Menu.less';
 
 interface MenuProps {
-  children: React.ReactChildren;
-  hasShadow: boolean;
-  maxHeight: number | string;
+  children: React.ReactNode;
+  hasShadow?: boolean;
+  maxHeight?: number | string;
   onItemClick?: () => void;
   width?: number | string;
   preventWindowScroll?: boolean;
@@ -201,7 +201,7 @@ function isExist(value: any): value is any {
   return value !== null && value !== undefined;
 }
 
-function childrenToArray(children: React.ReactChildren): React.ReactChild[] {
+function childrenToArray(children: React.ReactNode): React.ReactChild[] {
   const ret: React.ReactChild[] = [];
   // Use forEach instead of map to avoid cloning for key unifying.
   React.Children.forEach(children, child => {
