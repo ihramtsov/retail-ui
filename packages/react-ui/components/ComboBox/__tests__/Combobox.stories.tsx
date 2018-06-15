@@ -1,5 +1,4 @@
 
-/* eslint-disable react/no-multi-comp */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 
@@ -7,48 +6,40 @@ import ComboBoxV2 from '../ComboBox';
 import MenuItem from '../../MenuItem';
 import MenuSeparator from '../../MenuSeparator';
 
-storiesOf('ComboBox v2', module)
-  .add('simple combobox', () => <SimpleCombobox />)
-  .add('with error handling', () => (
+storiesOf('ComboBox v2', module).add('simple combobox', () => <SimpleCombobox />).add('with error handling', () => (
     <TestComboBox
       onSearch={search}
       renderItem={renderValue}
       onUnexpectedInput={errorStrategy}
     />
-  ))
-  .add('with error skipping', () => (
+  )).add('with error skipping', () => (
     <TestComboBox
       onSearch={search}
       renderItem={renderValue}
       onUnexpectedInput={nullStrategy}
     />
-  ))
-  .add('with warning', () => (
+  )).add('with warning', () => (
     <TestComboBox
       onSearch={search}
       renderItem={renderValue}
       onUnexpectedInput={warningStrategy}
     />
-  ))
-  .add('with rejections', () => (
+  )).add('with rejections', () => (
     <TestComboBox onSearch={searchWithRejections} renderItem={renderValue} />
-  ))
-  .add('disabled', () => (
+  )).add('disabled', () => (
     <TestComboBox
       autoFocus
       disabled
       onSearch={search}
       renderItem={renderValue}
     />
-  ))
-  .add('with custom elements', () => (
+  )).add('with custom elements', () => (
     <TestComboBox
       onSearch={searchWithCustomElements}
       renderItem={renderValue}
       onUnexpectedInput={errorStrategy}
     />
-  ))
-  .add('autocomplete', () => (
+  )).add('autocomplete', () => (
     <TestComboBox
       autocomplete
       onSearch={search}
@@ -56,8 +47,7 @@ storiesOf('ComboBox v2', module)
       totalCount={12}
       onUnexpectedInput={errorStrategy}
     />
-  ))
-  .add('with autoFocus', () => (
+  )).add('with autoFocus', () => (
     <TestComboBox
       autocomplete
       autoFocus
@@ -66,37 +56,32 @@ storiesOf('ComboBox v2', module)
       totalCount={12}
       onUnexpectedInput={errorStrategy}
     />
-  ))
-  .add('with maxMenuHeight', () => (
+  )).add('with maxMenuHeight', () => (
     <TestComboBox
       onSearch={search}
       renderItem={renderValue}
       maxMenuHeight={200}
     />
-  ))
-  .add('with borderless', () => (
+  )).add('with borderless', () => (
     <TestComboBox
       onSearch={search}
       renderItem={renderValue}
       onUnexpectedInput={nullStrategy}
       borderless
     />
-  ))
-  .add('with center align', () => (
+  )).add('with center align', () => (
     <SimpleCombobox
       align={'center'}
       placeholder={'placeholder'}
       noInitialValue={true}
     />
-  ))
-  .add('with right align', () => (
+  )).add('with right align', () => (
     <SimpleCombobox
       align={'right'}
       placeholder={'placeholder'}
       noInitialValue={true}
     />
-  ))
-  .add('with maxLength', () => (
+  )).add('with maxLength', () => (
     <SimpleCombobox
       maxLength={10}
       placeholder={'placeholder'}
@@ -105,12 +90,12 @@ storiesOf('ComboBox v2', module)
   ));
 
 type State = {
-  value: ?{ id: number, name: string },
+  value: Nullable<{ id: number, name: string }>,
   error: boolean,
   warning: boolean
 };
 
-class TestComboBox extends React.Component<*, State> {
+class TestComboBox extends React.Component<any, State> {
   state = {
     value: null,
     error: false,
@@ -163,7 +148,7 @@ class TestComboBox extends React.Component<*, State> {
   }
 }
 
-class SimpleCombobox extends React.Component<{}, *> {
+class SimpleCombobox extends React.Component<{}, any> {
   state = {
     value: this.props.noInitialValue ? null : { value: 1, label: 'First' }
   };
@@ -249,9 +234,7 @@ function searchWithRejections(query: string) {
     new Promise(resolve => setTimeout(resolve, random(5) * 100, v));
 
   searchCount++;
-  return Promise.resolve()
-    .then(delay)
-    .then(
+  return Promise.resolve().then(delay).then(
       () =>
         searchCount % 2
           ? Promise.reject()
