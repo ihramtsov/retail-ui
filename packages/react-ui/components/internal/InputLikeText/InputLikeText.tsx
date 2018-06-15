@@ -1,10 +1,9 @@
-
-
 import classNames from 'classnames';
 import * as React from 'react';
 
 import '../../ensureOldIEClassName';
 import Upgrades from '../../../lib/Upgrades';
+import { InputSize } from '../../Input';
 
 const isFlatDesign = Upgrades.isFlatDesignEnabled();
 
@@ -12,71 +11,78 @@ const styles = isFlatDesign
   ? require('../../Input/Input.flat.less')
   : require('../../Input/Input.less');
 
-type Props = {
-  align?: 'left' | 'center' | 'right',
-  borderless?: boolean,
-  children?: React.Node,
-  error?: boolean,
-  padRight?: boolean,
-  warning?: boolean,
-  disabled?: boolean,
-  size: 'small' | 'medium' | 'large',
-  width?: string | number,
-  placeholder?: string,
-  innerRef?: (el: HTMLElement | null) => void,
+export interface InputLikeTextProps {
+  align?: 'left' | 'center' | 'right';
+  borderless?: boolean;
+  children?: React.ReactNode;
+  error?: boolean;
+  padRight?: boolean;
+  warning?: boolean;
+  disabled?: boolean;
+  size?: InputSize;
+  width?: string | number;
+  placeholder?: string;
+  innerRef?: (el: HTMLElement | null) => void;
   // eslint-disable-next-line flowtype/no-weak-types
-  [key: string]: any
-};
+  [key: string]: any;
+}
 
-type State = {
-  blinking: boolean
-};
+interface State {
+  blinking: boolean;
+}
 
-export default class InputLikeText extends React.Component<Props, State> {
-  _node: HTMLElement | null = null;
-  _blinkTimeout;
-
-  static defaultProps = {
+export default class InputLikeText extends React.Component<
+  InputLikeTextProps,
+  State
+> {
+  public static defaultProps = {
     size: 'small'
   };
 
-  state = {
+  public state = {
     blinking: false
   };
 
+  private _node: HTMLElement | null = null;
+  private _blinkTimeout: Nullable<TimeoutID>;
+
   /**
    * @public
    */
-  focus() {
-    this._node && this._node.focus();
+  public focus() {
+    if (this._node) {
+      this._node.focus();
+    }
   }
 
   /**
    * @public
    */
-  blur() {
-    this._node && this._node.blur();
+  public blur() {
+    if (this._node) {
+      this._node.blur();
+    }
   }
 
   /**
    * @public
    */
-  blink() {
+  public blink() {
     this.setState({ blinking: true }, () => {
-      this._blinkTimeout = setTimeout(
+      this._blinkTimeout = global.setTimeout(
         () => this.setState({ blinking: false }),
         150
       );
     });
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     if (this._blinkTimeout) {
       clearTimeout(this._blinkTimeout);
     }
   }
 
-  render() {
+  public render() {
     const {
       /* eslint-disable no-unused-vars */
       align,
@@ -155,14 +161,14 @@ export default class InputLikeText extends React.Component<Props, State> {
     );
   }
 
-  _ref = el => {
+  private _ref = (el: HTMLElement | null) => {
     if (this.props.innerRef) {
       this.props.innerRef(el);
     }
     this._node = el;
   };
 
-  _getSizeClassName() {
+  private _getSizeClassName() {
     const SIZE_CLASS_NAMES = {
       small: styles.sizeSmall,
       medium: Upgrades.isSizeMedium16pxEnabled()
@@ -171,6 +177,6 @@ export default class InputLikeText extends React.Component<Props, State> {
       large: styles.sizeLarge
     };
 
-    return SIZE_CLASS_NAMES[this.props.size];
+    return SIZE_CLASS_NAMES[this.props.size!];
   }
 }

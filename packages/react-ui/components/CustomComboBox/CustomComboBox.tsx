@@ -1,61 +1,60 @@
-
-/* eslint-disable flowtype/no-weak-types */
 import * as React from 'react';
 import shallow from 'fbjs/lib/shallowEqual';
 
 import ComboBoxView from './ComboBoxView';
-import type Input from '../Input';
-import type Menu from '../Menu/Menu';
+import Input from '../Input';
+import Menu from '../Menu/Menu';
 
 export type Action<T> =
-  | { type: 'ValueChange', value: T }
-  | { type: 'TextChange', value: string }
-  | { type: 'KeyPress', event: SyntheticKeyboardEvent<> }
+  | { type: 'ValueChange'; value: T }
+  | { type: 'TextChange'; value: string }
+  | { type: 'KeyPress'; event: React.KeyboardEvent }
   | {
-      type: 'DidUpdate',
-      prevProps: CustomComboBoxProps<T>,
-      prevState: CustomComboBoxState<T>
+      type: 'DidUpdate';
+      prevProps: CustomComboBoxProps<T>;
+      prevState: CustomComboBoxState<T>;
     }
   | { type: 'Mount' }
   | { type: 'Focus' }
   | { type: 'Blur' };
 
-export type CustomComboBoxProps<T> = {
-  align?: 'left' | 'center' | 'right',
-  autoFocus?: boolean,
-  borderless?: boolean,
-  disablePortal?: boolean,
-  disabled?: boolean,
-  error?: boolean,
-  maxLength?: number,
-  menuAlign?: 'left' | 'right',
-  openButton?: boolean,
-  onMouseEnter?: (e: SyntheticMouseEvent<>) => void,
-  onMouseOver?: (e: SyntheticMouseEvent<>) => void,
-  onMouseLeave?: (e: SyntheticMouseEvent<>) => void,
-  placeholder?: string,
-  size?: 'small' | 'medium' | 'large',
-  totalCount?: number,
-  value?: ?T,
-  warning?: boolean,
-  width?: string | number,
-  maxMenuHeight?: number | string,
-  renderItem?: (T, index?: number) => React.Node,
-  renderNotFound?: () => React.Node,
-  renderValue?: T => React.Node,
-  renderTotalCount?: (number, number) => React.Node
-};
+export interface CustomComboBoxProps<T> {
+  align?: 'left' | 'center' | 'right';
+  autoFocus?: boolean;
+  borderless?: boolean;
+  disablePortal?: boolean;
+  disabled?: boolean;
+  error?: boolean;
+  maxLength?: number;
+  menuAlign?: 'left' | 'right';
+  openButton?: boolean;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onMouseOver?: (e: React.MouseEvent) => void;
+  onMouseLeave?: (e: React.MouseEvent) => void;
+  placeholder?: string;
+  size?: 'small' | 'medium' | 'large';
+  totalCount?: number;
+  value?: Nullable<T>;
+  warning?: boolean;
+  width?: string | number;
+  maxMenuHeight?: number | string;
+  renderItem?: (x0: T, index?: number) => React.ReactNode;
+  renderNotFound?: () => React.ReactNode;
+  renderValue?: (x0: T) => React.ReactNode;
+  renderTotalCount?: (x0: number, x1: number) => React.ReactNode;
+  valueToString?: (x0: T) => string;
+}
 
-export type CustomComboBoxState<T> = {
-  editing: boolean,
-  loading: boolean,
-  opened: boolean,
-  textValue: string,
-  items: ?Array<T>
-};
+export interface CustomComboBoxState<T> {
+  editing: boolean;
+  loading: boolean;
+  opened: boolean;
+  textValue: string;
+  items: Nullable<T[]>;
+}
 
 export type Effect<T> = (
-  dispatch: (Action<T>) => void,
+  dispatch: (x0: Action<T>) => void,
   getState: () => CustomComboBoxState<T>,
   getProps: () => CustomComboBoxProps<T>,
   getInstance: () => CustomComboBox
@@ -68,7 +67,7 @@ export type Reducer<T> = (
 ) => CustomComboBoxState<T> | [CustomComboBoxState<T>, Array<Effect<T>>];
 
 export type Props<T> = {
-  reducer: Reducer<T>
+  reducer: Reducer<T>;
 } & CustomComboBoxProps<T>;
 
 export const DefaultState = {
@@ -79,39 +78,16 @@ export const DefaultState = {
   textValue: ''
 };
 
-class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
-  state: CustomComboBoxState<*> = DefaultState;
-  input: ?Input;
-  menu: ?Menu;
-  focused: boolean = false;
+class CustomComboBox extends React.Component<
+  Props<any>,
+  CustomComboBoxState<any>
+> {
+  public state: CustomComboBoxState<any> = DefaultState;
+  private input: Nullable<Input>;
+  private menu: Nullable<Menu>;
+  private focused: boolean = false;
 
-  dispatch = (action: Action<*>) => {
-    let effects;
-    this.setState(
-      state => {
-        let nextState;
-        let stateAndEffect = this.props.reducer(state, this.props, action);
-        if (!Array.isArray(stateAndEffect)) {
-          stateAndEffect = [stateAndEffect, []];
-        }
-        [nextState, effects] = stateAndEffect;
-        return nextState;
-      },
-      () => {
-        effects.forEach(this.handleEffect);
-      }
-    );
-  };
-
-  handleEffect = (effect: Function) => {
-    effect(this.dispatch, this.getState, this.getProps, () => this);
-  };
-
-  getProps = () => this.props;
-
-  getState = () => this.state;
-
-  focus = () => {
+  public focus = () => {
     if (this.props.disabled) {
       return;
     }
@@ -119,7 +95,7 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
     this.handleFocus();
   };
 
-  blur = () => {
+  public blur = () => {
     if (this.props.disabled) {
       return;
     }
@@ -127,7 +103,7 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
     this.handleBlur();
   };
 
-  render() {
+  public render() {
     const viewProps = {
       align: this.props.align,
       borderless: this.props.borderless,
@@ -150,13 +126,14 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
       maxLength: this.props.maxLength,
       maxMenuHeight: this.props.maxMenuHeight,
 
-      onChange: value => this.dispatch({ type: 'ValueChange', value }),
+      onChange: (value: any) => this.dispatch({ type: 'ValueChange', value }),
       onClickOutside: this.handleBlur,
       onFocus: this.handleFocus,
       onFocusOutside: this.handleBlur,
-      onInputChange: (_, value) => this.dispatch({ type: 'TextChange', value }),
+      onInputChange: (_: any, value: string) =>
+        this.dispatch({ type: 'TextChange', value }),
       onInputFocus: this.handleFocus,
-      onInputKeyDown: event => {
+      onInputKeyDown: (event: React.KeyboardEvent) => {
         event.persist();
         this.dispatch({ type: 'KeyPress', event });
       },
@@ -168,10 +145,10 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
       renderValue: this.props.renderValue,
       renderTotalCount: this.props.renderTotalCount,
 
-      refInput: input => {
+      refInput: (input: Nullable<Input>) => {
         this.input = input;
       },
-      refMenu: menu => {
+      refMenu: (menu: Nullable<Menu>) => {
         this.menu = menu;
       }
     };
@@ -179,14 +156,14 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
     return <ComboBoxView {...viewProps} />;
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.dispatch({ type: 'Mount' });
     if (this.props.autoFocus) {
       this.focus();
     }
   }
 
-  componentDidUpdate(prevProps: any, prevState: any) {
+  public componentDidUpdate(prevProps: any, prevState: any) {
     if (prevState.editing && !this.state.editing) {
       this.handleBlur();
     }
@@ -195,7 +172,33 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
     }
   }
 
-  handleFocus = () => {
+  private dispatch = (action: Action<any>) => {
+    let effects: Array<Effect<any>>;
+    this.setState(
+      state => {
+        let nextState;
+        let stateAndEffect = this.props.reducer(state, this.props, action);
+        if (!Array.isArray(stateAndEffect)) {
+          stateAndEffect = [stateAndEffect, []];
+        }
+        [nextState, effects] = stateAndEffect;
+        return nextState;
+      },
+      () => {
+        effects.forEach(this.handleEffect);
+      }
+    );
+  };
+
+  private handleEffect = (effect: Effect<any>) => {
+    effect(this.dispatch, this.getState, this.getProps, () => this);
+  };
+
+  private getProps = () => this.props;
+
+  private getState = () => this.state;
+
+  private handleFocus = () => {
     if (this.focused) {
       return;
     }
@@ -203,7 +206,7 @@ class CustomComboBox extends React.Component<Props<*>, CustomComboBoxState<*>> {
     this.dispatch({ type: 'Focus' });
   };
 
-  handleBlur = () => {
+  private handleBlur = () => {
     if (!this.focused) {
       return;
     }

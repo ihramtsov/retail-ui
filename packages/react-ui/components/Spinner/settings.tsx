@@ -1,5 +1,8 @@
+import { SpinnerType } from './Spinner';
 
-export const types = {
+export const types: {
+  [key: string]: SpinnerType;
+} = {
   big: 'big',
   mini: 'mini',
   normal: 'normal'
@@ -9,13 +12,13 @@ export const sizeMaps = {
   [types.mini]: {
     height: 16,
     width: 16,
-    viewBox: null,
+    viewBox: undefined,
     strokeWidth: 1.5
   },
   [types.normal]: {
     height: 35,
     width: 47,
-    viewBox: null,
+    viewBox: undefined,
     strokeWidth: 2
   },
   [types.big]: {

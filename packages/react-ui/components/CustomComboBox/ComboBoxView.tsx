@@ -1,5 +1,3 @@
-
-
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
 
@@ -11,67 +9,75 @@ import MenuItem from '../MenuItem';
 import RenderLayer from '../RenderLayer';
 import Spinner from '../Spinner';
 
-type Props<T> = {
-  align?: 'left' | 'center' | 'right',
-  autoFocus?: boolean,
-  borderless?: boolean,
-  disablePortal?: boolean,
-  disabled?: boolean,
-  editing?: boolean,
-  error?: boolean,
-  items?: ?(T[]),
-  loading?: boolean,
-  menuAlign?: 'left' | 'right',
-  opened?: boolean,
-  openButton?: boolean,
-  placeholder?: string,
-  size: 'small' | 'medium' | 'large',
-  textValue?: string,
-  totalCount?: number,
-  value?: ?T,
-  warning?: boolean,
-  width: string | number,
-  maxLength?: number,
-  maxMenuHeight?: number | string,
+interface ComboBoxViewProps<T> {
+  align?: 'left' | 'center' | 'right';
+  autoFocus?: boolean;
+  borderless?: boolean;
+  disablePortal?: boolean;
+  disabled?: boolean;
+  editing?: boolean;
+  error?: boolean;
+  items?: Nullable<T[]>;
+  loading?: boolean;
+  menuAlign?: 'left' | 'right';
+  opened?: boolean;
+  openButton?: boolean;
+  placeholder?: string;
+  size?: 'small' | 'medium' | 'large';
+  textValue?: string;
+  totalCount?: number;
+  value?: Nullable<T>;
+  warning?: boolean;
+  width?: string | number;
+  maxLength?: number;
+  maxMenuHeight?: number | string;
 
-  onChange: T => mixed,
-  onClickOutside: () => void,
-  onFocus?: () => void,
-  onFocusOutside: () => void,
-  onInputBlur?: () => void,
-  onInputChange?: (SyntheticEvent<HTMLInputElement>, string) => void,
-  onInputFocus?: () => void,
-  onInputKeyDown?: (e: SyntheticKeyboardEvent<>) => void,
-  onMouseEnter?: (e: SyntheticMouseEvent<>) => void,
-  onMouseOver?: (e: SyntheticMouseEvent<>) => void,
-  onMouseLeave?: (e: SyntheticMouseEvent<>) => void,
-  renderItem: (item: T) => React.Node,
-  renderNotFound: () => React.Node,
-  renderTotalCount?: (found: number, total: number) => React.Node,
-  renderValue: (item: T) => React.Node,
-  refInput?: (input: ?Input) => void,
-  refMenu?: (menu: ?Menu) => void
-};
+  onChange?: (x0: T) => any;
+  onClickOutside?: () => void;
+  onFocus?: () => void;
+  onFocusOutside?: () => void;
+  onInputBlur?: () => void;
+  onInputChange?: (x0: React.ChangeEvent<HTMLInputElement>, x1: string) => void;
+  onInputFocus?: () => void;
+  onInputKeyDown?: (e: React.KeyboardEvent) => void;
+  onMouseEnter?: (e: React.MouseEvent) => void;
+  onMouseOver?: (e: React.MouseEvent) => void;
+  onMouseLeave?: (e: React.MouseEvent) => void;
+  renderItem?: (item: T) => React.ReactNode;
+  renderNotFound?: () => React.ReactNode;
+  renderTotalCount?: (found: number, total: number) => React.ReactNode;
+  renderValue?: (item: T) => React.ReactNode;
+  refInput?: (input: Nullable<Input>) => void;
+  refMenu?: (menu: Nullable<Menu>) => void;
+}
 
-class ComboBoxView<T> extends React.Component<Props<T>> {
-  static defaultProps = {
-    renderItem: (x: *, i: *) => x,
+class ComboBoxView<T> extends React.Component<ComboBoxViewProps<T>> {
+  public static defaultProps = {
+    renderItem: (item: any) => item,
     renderNotFound: () => 'Не найдено',
-    renderValue: (x: *) => x,
-    onClickOutside: () => {},
-    onFocusOutside: () => {},
-    onChange: () => {},
+    renderValue: (item: any) => item,
+    onClickOutside: () => {
+      /**/
+    },
+    onFocusOutside: () => {
+      /**/
+    },
+    onChange: (item: any) => {
+      /**/
+    },
     size: 'small',
-    width: (250: string | number)
+    width: 250 as string | number
   };
 
-  componentDidMount() {
-    if (this.props.autoFocus) {
-      this.props.onFocus && this.props.onFocus();
+  private input: Nullable<Input>;
+
+  public componentDidMount() {
+    if (this.props.autoFocus && this.props.onFocus) {
+      this.props.onFocus();
     }
   }
 
-  componentDidUpdate(prevProps: Props<T>) {
+  public componentDidUpdate(prevProps: ComboBoxViewProps<T>) {
     const { input, props } = this;
     if (props.editing && !prevProps.editing && input) {
       input.focus();
@@ -79,9 +85,7 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
     }
   }
 
-  input: ?Input;
-
-  render() {
+  public render(): React.ReactNode {
     const {
       items,
       loading,
@@ -113,7 +117,7 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
       topOffsets.arrow += 6;
     }
 
-    const spinner = (
+    const spinner: React.ReactNode = (
       <span
         style={{
           position: 'absolute',
@@ -126,7 +130,7 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
       </span>
     );
 
-    const arrow = (
+    const arrow: React.ReactNode = (
       <span
         style={{
           border: '4px solid transparent',
@@ -162,6 +166,7 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
           {opened && (
             <DropdownContainer
               align={menuAlign}
+              // tslint:disable-next-line:jsx-no-lambda
               getParent={() => findDOMNode(this)}
               offsetY={1}
               disablePortal={this.props.disablePortal}
@@ -174,7 +179,7 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
     );
   }
 
-  renderMenu() {
+  private renderMenu(): React.ReactNode {
     const {
       opened,
       items,
@@ -229,29 +234,30 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
     );
   }
 
-  // eslint-disable-next-line flowtype/no-weak-types
-  renderItem = (item: any, index: number) => {
+  private renderItem = (item: T, index: number): React.ReactNode => {
     // NOTE this is undesireable feature, better
     // to remove it from further versions
     if (typeof item === 'function' || React.isValidElement(item)) {
+      // @ts-ignore
       const element = typeof item === 'function' ? item() : item;
       const props = Object.assign(
         {
           key: index,
-          onClick: () => this.props.onChange(element.props)
+          onClick: () => this.props.onChange!(element.props)
         },
         element.props
       );
       return React.cloneElement(element, props);
     }
     return (
-      <MenuItem onClick={() => this.props.onChange(item)} key={index}>
-        {this.props.renderItem(item)}
+      // tslint:disable-next-line:jsx-no-lambda
+      <MenuItem onClick={() => this.props.onChange!(item)} key={index}>
+        {this.props.renderItem!(item)}
       </MenuItem>
     );
   };
 
-  renderInput() {
+  private renderInput(): React.ReactNode {
     const {
       align,
       borderless,
@@ -308,12 +314,12 @@ class ComboBoxView<T> extends React.Component<Props<T>> {
         size={size}
         width="100%"
       >
-        {value ? renderValue(value) : null}
+        {value ? renderValue!(value) : null}
       </InputLikeText>
     );
   }
 
-  refInput = (input: ?Input) => {
+  private refInput = (input: Nullable<Input>) => {
     if (this.props.refInput) {
       this.props.refInput(input);
     }

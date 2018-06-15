@@ -1,34 +1,37 @@
-
-/* eslint-disable flowtype/no-weak-types */
-/* global $Subtype */
 import * as React from 'react';
 import debounce from 'lodash.debounce';
 
 import MenuItem from '../../MenuItem';
-import type Menu from '../../Menu/Menu';
+import Menu from '../../Menu/Menu';
 import { DefaultState } from '../CustomComboBox';
-import type CustomComboBox, {
+import CustomComboBox, {
   CustomComboBoxProps,
   CustomComboBoxState
 } from '../CustomComboBox';
 import LayoutEvents from '../../../lib/LayoutEvents';
 
-type Action = $Subtype<{ type: string }>;
+interface BaseAction {
+  type: string;
+}
+
+interface Action extends BaseAction {
+  [key: string]: any;
+}
 
 export type Props = CustomComboBoxProps<any> & {
-  getItems: (query: string) => Promise<any[]>,
-  itemToValue?: any => string,
-  onBlur?: () => {},
-  onChange?: ({ target: { value: any } }, value: any) => {},
-  onFocus?: () => {},
-  onInputChange?: (textValue: string) => any,
-  onUnexpectedInput?: (query: string) => ?boolean,
-  valueToString?: any => string
+  getItems: (query: string) => Promise<any[]>;
+  itemToValue?: (x0: any) => string;
+  onBlur?: () => {};
+  onChange?: (x0: { target: { value: any } }, value: any) => {};
+  onFocus?: () => {};
+  onInputChange?: (textValue: string) => any;
+  onUnexpectedInput?: (query: string) => Nullable<boolean>;
+  valueToString?: (x0: any) => string;
 };
 
 export type State = {
-  inputChanged?: boolean,
-  focused?: boolean
+  inputChanged?: boolean;
+  focused?: boolean;
 } & CustomComboBoxState<any>;
 
 export type EffectType = (
@@ -54,7 +57,7 @@ const searchFactory = (isEmpty: boolean): EffectType => (
     dispatch({ type: 'RequestItems' });
     const { getItems } = getProps();
     const searchValue = isEmpty ? '' : getState().textValue;
-    let expectingId = ++requestId;
+    const expectingId = ++requestId;
 
     try {
       const items = await getItems(searchValue);
@@ -75,15 +78,21 @@ const Effect = {
   DebouncedSearch: debounce(searchFactory(false), 300),
   Blur: ((dispatch, getState, getProps) => {
     const { onBlur } = getProps();
-    onBlur && onBlur();
-  }: EffectType),
+    if (onBlur) {
+      onBlur();
+    }
+  }) as EffectType,
   Focus: ((dispatch, getState, getProps) => {
     const { onFocus } = getProps();
-    onFocus && onFocus();
-  }: EffectType),
+    if (onFocus) {
+      onFocus();
+    }
+  }) as EffectType,
   Change: (value: any): EffectType => (dispatch, getState, getProps) => {
     const { onChange } = getProps();
-    onChange && onChange({ target: { value } }, value);
+    if (onChange) {
+      onChange({ target: { value } }, value);
+    }
   },
   UnexpectedInput: (textValue: string): EffectType => (
     dispatch,
@@ -91,7 +100,9 @@ const Effect = {
     getProps
   ) => {
     const { onUnexpectedInput } = getProps();
-    onUnexpectedInput && onUnexpectedInput(textValue);
+    if (onUnexpectedInput) {
+      onUnexpectedInput(textValue);
+    }
   },
   InputChange: ((dispatch, getState, getProps) => {
     const { onInputChange } = getProps();
@@ -102,11 +113,13 @@ const Effect = {
         dispatch({ type: 'TextChange', value: returnedValue });
       }
     }
-  }: EffectType),
+  }) as EffectType,
   HighlightMenuItem: ((dispatch, getState, getProps, getInstance) => {
     const { value, itemToValue } = getProps();
     const { items, focused } = getState();
-    const { menu }: { menu: ?Menu } = getInstance();
+    // FIXME: accessing private props
+    // @ts-ignore
+    const { menu }: { menu: Nullable<Menu> } = getInstance();
 
     if (!menu) {
       return;
@@ -120,30 +133,41 @@ const Effect = {
     if (items && items.length && value && itemToValue) {
       index = items.findIndex(x => itemToValue(x) === itemToValue(value));
     }
+    // @ts-ignore
     menu._highlightItem(index);
     if (index >= 0) {
+      // @ts-ignore
       process.nextTick(() => menu && menu._scrollToSelected());
     } else {
       process.nextTick(() => menu && menu.down());
     }
-  }: EffectType),
-  SelectMenuItem: (event: SyntheticEvent<*>) =>
+  }) as EffectType,
+  SelectMenuItem: (event: React.SyntheticEvent<any>) =>
     ((dispatch, getState, getProps, getInstance) => {
-      const { menu }: { menu: ?Menu } = getInstance();
-      menu && menu.enter(event);
-    }: EffectType),
+      // FIXME: accessing private props
+      // @ts-ignore
+      const { menu }: { menu: Nullable<Menu> } = getInstance();
+      if (menu) {
+        menu.enter(event);
+      }
+    }) as EffectType,
   MoveMenuHighlight: (direction: 1 | -1): EffectType => (
     dispatch,
     getState,
     getProps,
     getInstance
   ) => {
-    const { menu }: { menu: ?Menu } = getInstance();
-    menu && menu._move(direction);
+    // FIXME: accessing private props
+    // @ts-ignore
+    const { menu }: { menu: Nullable<Menu> } = getInstance();
+    if (menu) {
+      // @ts-ignore
+      menu._move(direction);
+    }
   },
   Reflow: (() => {
     LayoutEvents.emit();
-  }: EffectType)
+  }) as EffectType
 };
 
 const reducers: { [type: string]: Reducer } = {
@@ -156,7 +180,7 @@ const reducers: { [type: string]: Reducer } = {
       ...state,
       opened: false,
       editing: props.error
-    };
+    } as State;
   },
   Blur(state, props, action) {
     const { inputChanged } = state;
@@ -286,13 +310,13 @@ const reducers: { [type: string]: Reducer } = {
         ...state,
         loading: false,
         items: [
-          <MenuItem disabled>
+          <MenuItem disabled key="message">
             <div style={{ maxWidth: 300, whiteSpace: 'normal' }}>
               Что-то пошло не так. Проверьте соединение с интернетом и
               попробуйте еще раз
             </div>
           </MenuItem>,
-          <MenuItem alkoLink onClick={action.repeatRequest}>
+          <MenuItem alkoLink onClick={action.repeatRequest} key="retry">
             Обновить
           </MenuItem>
         ]

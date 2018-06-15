@@ -1,26 +1,26 @@
-
 import {
   reducers as defaultReducers,
-  Effect as DefaultEffect
+  Effect as DefaultEffect,
+  EffectType,
+  Reducer
 } from './default';
 
 import debounce from 'lodash.debounce';
 
 const Effect = {
-  ...DefaultEffect
-};
-
-Effect.Search = (dispatch, getState, getProps, getInstance) => {
-  DefaultEffect.Search(false)(dispatch, getState, getProps, getInstance);
-  dispatch({ type: 'Open' });
+  ...DefaultEffect,
+  Search: ((dispatch, getState, getProps, getInstance) => {
+    DefaultEffect.Search(false)(dispatch, getState, getProps, getInstance);
+    dispatch({ type: 'Open' });
+  }) as EffectType
 };
 
 Effect.DebouncedSearch = debounce(Effect.Search, 300);
 
-const reducers = {
+const reducers: { [key: string]: Reducer } = {
   ...defaultReducers,
   Focus: (state, props, action) => {
-    const textValue = props.value ? props.valueToString(props.value) : '';
+    const textValue = props.value ? props.valueToString!(props.value) : '';
     if (!textValue) {
       return [
         {
@@ -46,7 +46,11 @@ const reducers = {
       [Effect.Search, Effect.Focus]
     ];
   },
-  TextChange: (state, props, action) => {
+  TextChange: ((
+    state,
+    props,
+    action: { type: 'TextChange'; value: string }
+  ) => {
     if (!action.value) {
       return [
         {
@@ -67,7 +71,7 @@ const reducers = {
       },
       [Effect.DebouncedSearch, Effect.InputChange]
     ];
-  },
+  }) as Reducer,
   Open: (state, props, action) => {
     return {
       ...state,
