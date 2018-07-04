@@ -1,8 +1,7 @@
-/* tslint:disable */
 import * as React from 'react';
 import { mount } from 'enzyme';
 import Input from '../Input';
-import MaskedInput from 'react-input-mask';
+import MaskedInput from '../../internal/MaskedInput';
 
 const render = props => mount(React.createElement(Input, props));
 
@@ -67,38 +66,42 @@ describe('<Input />', () => {
       placeholder: 'somePlaceholder',
       title: 'someTitle',
 
-      onBlur: () => {},
-      onCopy: () => {},
-      onClick: () => {},
-      onMouseUp: () => {},
-      onMouseDown: () => {},
-      onCut: () => {},
-      onFocus: () => {},
-      onInput: () => {},
-      onKeyDown: () => {},
-      onKeyPress: () => {},
-      onKeyUp: () => {},
-      onPaste: () => {}
+      onBlur: () => undefined,
+      onCopy: () => undefined,
+      onClick: () => undefined,
+      onMouseUp: () => undefined,
+      onMouseDown: () => undefined,
+      onCut: () => undefined,
+      onFocus: () => undefined,
+      onInput: () => undefined,
+      onKeyDown: () => undefined,
+      onKeyPress: () => undefined,
+      onKeyUp: () => undefined,
+      onPaste: () => undefined
     };
     const inputProps = render({ ...props, value: 'hello' })
       .find('input')
       .props();
-    for (let prop in props) {
-      expect(inputProps[prop]).toBe(props[prop]);
+    for (const prop in props) {
+      if (props[prop]) {
+        expect(inputProps[prop]).toBe(props[prop]);
+      }
     }
   });
 
   it('passes onMouse* props to label', () => {
     const props = {
-      onMouseEnter: () => {},
-      onMouseOver: () => {},
-      onMouseLeave: () => {}
+      onMouseEnter: () => undefined,
+      onMouseOver: () => undefined,
+      onMouseLeave: () => undefined
     };
     const inputProps = render({ ...props, value: 'hello' })
       .find('label')
       .props();
-    for (let prop in props) {
-      expect(inputProps[prop]).toBe(props[prop]);
+    for (const prop in props) {
+      if (props[prop]) {
+        expect(inputProps[prop]).toBe(props[prop]);
+      }
     }
   });
 
@@ -133,8 +136,10 @@ describe('<Input />', () => {
     const inputProps = render(props)
       .find(MaskedInput)
       .props();
-    for (let prop in props) {
-      expect(inputProps[prop]).toBe(props[prop]);
+    for (const prop in props) {
+      if (props[prop]) {
+        expect(inputProps[prop]).toBe(props[prop]);
+      }
     }
   });
 
